@@ -1,45 +1,69 @@
-
-import React,{useState} from 'react'
+import React, { useState } from 'react';
+import { Container, Card, CardContent, Typography, TextField, Button, Box } from '@mui/material';
 
 const App = () => {
-  
-  const [city,setCity] = useState("");
-  const [result,setResult] = useState("");
-  const changeHandler = e =>{
+  const [city, setCity] = useState("");
+  const [result, setResult] = useState("");
+
+  const changeHandler = e => {
     setCity(e.target.value);
   }
-  const submitHandler = e =>{
+
+  const submitHandler = e => {
     e.preventDefault();
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d885aa1d783fd13a55050afeef620fcb`).then(
-      response=> response.json()).then(
-        data => {
-          const kelvin = data.main.temp;
-          const celcius = kelvin - 273.15;
-          setResult("Temperature at "+city+"\n"+Math.round(celcius)+"°C");
-        }
-      ).catch(error => console.log(error))
-      setCity("");
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d885aa1d783fd13a55050afeef620fcb`)
+      .then(response => response.json())
+      .then(data => {
+        const kelvin = data.main.temp;
+        const celcius = kelvin - 273.15;
+        setResult(`Temperature in ${city}: ${Math.round(celcius)}°C`);
+      })
+      .catch(error => console.log(error));
+    setCity("");
   }
 
   return (
-    <div>
-      <center>
-        <div className="card">
-          <div className="card-body">
-            <h4 className="card-title">Weather App</h4>
+    <Box
+      sx={{
+        backgroundImage: 'url(https://www.pixelstalk.net/wp-content/uploads/2016/07/HD-Weather-Image.jpg)', 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Container maxWidth="sm">
+        <Card>
+          <CardContent>
+            <Typography variant="h4" component="h2" gutterBottom>
+              Weather App
+            </Typography>
             <form onSubmit={submitHandler}>
-              <input size="30" type="text"  onChange={changeHandler} value={city}/> <br /><br />
-              <input type="submit" value="Get Temperature" />
-            </form><br /> <br />
-            <div>
-               <h1>{result}</h1> 
-            </div>
-          </div>
-        </div>
-      </center>
-    </div>
-  )
+              <TextField
+                label="City"
+                variant="outlined"
+                fullWidth
+                value={city}
+                onChange={changeHandler}
+                margin="normal"
+              />
+              <Button variant="contained" color="primary" type="submit" fullWidth>
+                Get Temperature
+              </Button>
+            </form>
+            {result && (
+              <Typography variant="h6" component="h3" gutterBottom mt={2}>
+                {result}
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
+      </Container>
+    </Box>
+  );
 }
 
-export default App
-
+export default App;
